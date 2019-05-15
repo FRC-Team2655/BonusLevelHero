@@ -3,25 +3,13 @@ using System.Threading;
 using Microsoft.SPOT;
 using Microsoft.SPOT.Hardware;
 
-namespace BonusLevel
-{
-    public class Program
-    {
-        public static void Main()
-        {
-            /* simple counter to print and watch using the debugger */
-            int counter = 0;
-            /* loop forever */
-            while (true)
-            {
-                /* print the three analog inputs as three columns */
-                Debug.Print("Counter Value: " + counter);
+namespace BonusLevel {
+    public class Program {
+        public const int TIMING = 20;
 
-                /* increment counter */
-                ++counter; /* try to land a breakpoint here and hover over 'counter' to see it's current value.  Or add it to the Watch Tab */
-
-                /* wait a bit */
-                System.Threading.Thread.Sleep(100);
+        public static void Main() {
+            while (true) {
+                System.Threading.Thread.Sleep(TIMING);
             }
         }
     }
