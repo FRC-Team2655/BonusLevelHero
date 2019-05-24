@@ -2,6 +2,7 @@ using System;
 using Microsoft.SPOT;
 using CTRE.Phoenix.Controller;
 using CTRE.Phoenix;
+using Math = System.Math;
 
 namespace BonusLevel {
     public class Robot {
@@ -52,7 +53,41 @@ namespace BonusLevel {
 
         }
 
+        double[] arcadeDrive(float xSpeed, float zRotation) {
 
+            float leftMotorOutput;
+            float rightMotorOutput;
+
+            // Prevent -0 from breaking the arcade drive...
+            xSpeed += 0.0f;
+            zRotation += 0.0f;
+
+            float maxInput = (float) Math.Max(Math.Abs(xSpeed), Math.Abs(zRotation));
+            // If xSpeed is negative make maxInput negative
+            if (xSpeed < 0) maxInput *= -1;
+
+            if (xSpeed >= 0.0) {
+                // First quadrant, else second quadrant
+                if (zRotation >= 0.0) {
+                    leftMotorOutput = maxInput;
+                    rightMotorOutput = xSpeed - zRotation;
+                } else {
+                    leftMotorOutput = xSpeed + zRotation;
+                    rightMotorOutput = maxInput;
+                }
+            } else {
+                // Third quadrant, else fourth quadrant
+                if (zRotation >= 0.0) {
+                    leftMotorOutput = xSpeed + zRotation;
+                    rightMotorOutput = maxInput;
+                } else {
+                    leftMotorOutput = maxInput;
+                    rightMotorOutput = xSpeed - zRotation;
+                }
+            }
+
+            return new double[] { leftMotorOutput, rightMotorOutput };
+        }
 
         public void feed() {
             // Run robotInit if there is no current state
