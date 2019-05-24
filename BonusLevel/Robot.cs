@@ -5,6 +5,8 @@ using CTRE.Phoenix;
 
 namespace BonusLevel {
     public class Robot {
+        bool haveEnabledButtonsBeenReleased = true;
+
         public enum State { Enabled, Disabled, None };
 
         GameController js0 = null;
@@ -15,20 +17,35 @@ namespace BonusLevel {
             js0 = new GameController(UsbHostDevice.GetInstance());
         }
 
-        private void enabledInit() {
-
-        }
-
-        private void disabledInit() {
-
-        }
-
         private void robotPeriodic() {
-            printGamepadButtons();
+
+            // If both buttons have been pressed, enable the robot
+            if (js0.GetButton(RobotMap.BACK) && js0.GetButton(RobotMap.START) && currentState == State.Disabled) {
+                switchState(State.Enabled);
+                haveEnabledButtonsBeenReleased = false;
+            }
+
+            // If both buttons have been released, allow the ability to disable
+            if (!js0.GetButton(RobotMap.BACK) && !js0.GetButton(RobotMap.START) && !haveEnabledButtonsBeenReleased) {
+                haveEnabledButtonsBeenReleased = true;
+            }
+
+            // If either button has been pressed, disable
+            if (haveEnabledButtonsBeenReleased && (js0.GetButton(RobotMap.BACK) || js0.GetButton(RobotMap.START)) && currentState == State.Enabled) {
+                switchState(State.Disabled);
+            }
+        }
+
+        private void enabledInit() {
+            Debug.Print("Enabled");
         }
 
         private void enabledPeriodic() {
 
+        }
+
+        private void disabledInit() {
+            Debug.Print("Disabled");
         }
 
         private void disabledPeriodic() {
@@ -79,8 +96,10 @@ namespace BonusLevel {
 
         UsbDeviceConnection lastConnectionStatus = UsbDeviceConnection.NotConnected;
         public void periodicSafetyCheck() {
-            // Keeps talonsrx enabled
-            CTRE.Phoenix.Watchdog.Feed();
+            if (currentState == State.Enabled) {
+                // Keeps talonsrx enabled
+                CTRE.Phoenix.Watchdog.Feed();
+            }
 
             // was the Game Controller disconnected safety check
             UsbDeviceConnection currentConnectionStatus = js0.GetConnectionStatus();
