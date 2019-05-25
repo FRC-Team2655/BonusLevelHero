@@ -14,6 +14,8 @@ namespace BonusLevel {
 
         GameController js0 = null;
 
+        CTRE.Phoenix.PneumaticControlModule pcm = new PneumaticControlModule(0);
+
         TalonSRX leftMaster = new TalonSRX(RobotMap.LEFT_MASTER);
         //TalonSRX leftSlave1 = new TalonSRX(RobotMap.LEFT_SLAVE1);
         //TalonSRX leftSlave2 = new TalonSRX(RobotMap.LEFT_SLAVE2);
@@ -47,6 +49,8 @@ namespace BonusLevel {
             if (haveEnabledButtonsBeenReleased && (js0.GetButton(RobotMap.BACK) || js0.GetButton(RobotMap.START)) && currentState == State.Enabled) {
                 switchState(State.Disabled);
             }
+
+            pcm.StartCompressor();
         }
 
         private void enabledInit() {
