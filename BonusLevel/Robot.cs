@@ -3,6 +3,8 @@ using Microsoft.SPOT;
 using CTRE.Phoenix.Controller;
 using CTRE.Phoenix;
 using Math = System.Math;
+using CTRE.Phoenix.MotorControl.CAN;
+using CTRE.Phoenix.MotorControl;
 
 namespace BonusLevel {
     public class Robot {
@@ -12,14 +14,24 @@ namespace BonusLevel {
 
         GameController js0 = null;
 
+        TalonSRX leftMaster = new TalonSRX(RobotMap.LEFT_MASTER);
+        //TalonSRX leftSlave1 = new TalonSRX(RobotMap.LEFT_SLAVE1);
+        //TalonSRX leftSlave2 = new TalonSRX(RobotMap.LEFT_SLAVE2);
+        //TalonSRX rightMaster = new TalonSRX(RobotMap.RIGHT_MASTER);
+        //TalonSRX rightSlave1 = new TalonSRX(RobotMap.RIGHT_SLAVE1);
+        //TalonSRX rightSlave2 = new TalonSRX(RobotMap.RIGHT_SLAVE2);
+
         private State currentState = State.None, newState = State.Disabled;
 
         private void robotInit() {
             js0 = new GameController(UsbHostDevice.GetInstance());
+            //leftSlave1.Follow(leftMaster);
+            //leftSlave2.Follow(leftMaster);
+            //rightSlave1.Follow(rightMaster);
+            //rightSlave2.Follow(rightMaster);
         }
 
         private void robotPeriodic() {
-
             // If both buttons have been pressed, enable the robot
             if (js0.GetButton(RobotMap.BACK) && js0.GetButton(RobotMap.START) && currentState == State.Disabled) {
                 switchState(State.Enabled);
@@ -39,22 +51,29 @@ namespace BonusLevel {
 
         private void enabledInit() {
             Debug.Print("Enabled");
+            leftMaster.SetNeutralMode(NeutralMode.Coast);
+            //rightMaster.SetNeutralMode(NeutralMode.Coast);
         }
 
         private void enabledPeriodic() {
-
+            // 2 - left and right, right stick
+            // 5 - up and down, right stick
+            float power = -1 * js0.GetAxis(5);
+            double rotate = 0.4 * js0.GetAxis(2);
+            drivePercentage(power, (float)rotate);
         }
 
         private void disabledInit() {
             Debug.Print("Disabled");
+            leftMaster.SetNeutralMode(NeutralMode.Brake);
+            //rightMaster.SetNeutralMode(NeutralMode.Brake);
         }
 
         private void disabledPeriodic() {
-
+            drivePercentage(0, 0);
         }
 
         double[] arcadeDrive(float xSpeed, float zRotation) {
-
             float leftMotorOutput;
             float rightMotorOutput;
 
@@ -144,6 +163,12 @@ namespace BonusLevel {
             }
 
             lastConnectionStatus = currentConnectionStatus;
+        }
+
+        public void drivePercentage(float speed, float rotation) {
+            double[] speeds = arcadeDrive(speed, rotation);
+            leftMaster.Set(ControlMode.PercentOutput, speeds[1]);
+            //rightMaster.Set(ControlMode.PercentOutput, speeds[0]);
         }
 
 
