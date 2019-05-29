@@ -91,6 +91,12 @@ namespace BonusLevel {
             } else {
                 intake1.Set(ControlMode.PercentOutput, 0);
             }
+
+            if (js0.GetButton(RobotMap.RAISE_INTAKE) && !js0.GetButton(RobotMap.LOWER_INTAKE)) {
+                raiseIntake();
+            }else if (!js0.GetButton(RobotMap.RAISE_INTAKE) && js0.GetButton(RobotMap.LOWER_INTAKE)) {
+                lowerIntake();
+            }
         }
 
         private void disabledInit() {
@@ -148,6 +154,15 @@ namespace BonusLevel {
             rightMaster.Set(ControlMode.PercentOutput, speeds[0]);
         }
 
+        public void raiseIntake() {
+            pcm.SetSolenoidOutput(RobotMap.RAISE_LOWER_A, true);
+            pcm.SetSolenoidOutput(RobotMap.RAISE_LOWER_B, false);
+        }
+
+        public void lowerIntake() {
+            pcm.SetSolenoidOutput(RobotMap.RAISE_LOWER_A, false);
+            pcm.SetSolenoidOutput(RobotMap.RAISE_LOWER_B, true);
+        }
 
 
         /// ////////////////////////////////

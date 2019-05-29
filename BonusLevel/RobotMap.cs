@@ -10,6 +10,12 @@ namespace BonusLevel {
         public const int INTAKE_OUT = 5;
         public const int DRIVE_AXIS = 1;
         public const int ROTATE_AXIS = 2;
+        public const int RAISE_INTAKE = 2;
+        public const int LOWER_INTAKE = 3;
+
+        // Solenoid IDs
+        public const int RAISE_LOWER_A = 4;
+        public const int RAISE_LOWER_B = 3;
 
         // Motor Controller IDs
         public const int LEFT_MASTER = 1;
