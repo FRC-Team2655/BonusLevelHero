@@ -84,6 +84,7 @@ namespace BonusLevel {
             drivePercentage(power, rotate);
 
             // Intake
+            // in / out
             if (js0.GetButton(RobotMap.INTAKE_IN) && !js0.GetButton(RobotMap.INTAKE_OUT)) {
                 intake1.Set(ControlMode.PercentOutput, 0.60);
             } else if (!js0.GetButton(RobotMap.INTAKE_IN) && js0.GetButton(RobotMap.INTAKE_OUT)) {
@@ -92,10 +93,18 @@ namespace BonusLevel {
                 intake1.Set(ControlMode.PercentOutput, 0);
             }
 
+            // raise / lower
             if (js0.GetButton(RobotMap.RAISE_INTAKE) && !js0.GetButton(RobotMap.LOWER_INTAKE)) {
                 raiseIntake();
             }else if (!js0.GetButton(RobotMap.RAISE_INTAKE) && js0.GetButton(RobotMap.LOWER_INTAKE)) {
                 lowerIntake();
+            }
+
+            // open / close
+            if (js0.GetButton(RobotMap.OPEN_INTAKE)) {
+                openIntake();
+            } else {
+                closeIntake();
             }
         }
 
@@ -162,6 +171,16 @@ namespace BonusLevel {
         public void lowerIntake() {
             pcm.SetSolenoidOutput(RobotMap.RAISE_LOWER_A, false);
             pcm.SetSolenoidOutput(RobotMap.RAISE_LOWER_B, true);
+        }
+
+        public void openIntake() {
+            pcm.SetSolenoidOutput(RobotMap.OPEN_CLOSE_A, true);
+            pcm.SetSolenoidOutput(RobotMap.OPEN_CLOSE_B, false);
+        }
+
+        public void closeIntake() {
+            pcm.SetSolenoidOutput(RobotMap.OPEN_CLOSE_A, false);
+            pcm.SetSolenoidOutput(RobotMap.OPEN_CLOSE_B, true);
         }
 
 
